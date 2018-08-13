@@ -1,0 +1,46 @@
+body
+  padding: 20px
+  background-color: $body-color
+  font-family: 'Roboto'
+  font-size: $main-size
+  line-height: 1
+  #main
+    box-shadow: 0 0 20px black
+    background-color: $back-color
+    border-radius: ($main-size / 2)
+    overflow: hidden
+    #title-bar
+      overflow: auto
+      padding: $main-size
+      > div
+        float: left
+        width: $main-size
+        height: $main-size
+        margin-right: ($main-size / 2)
+        border-radius: 100px
+        //border-style solid
+        //border-width 1px
+        &#close
+          //border-color #E0443E
+          background-color: #FF5F56
+        &#minimize
+          //border-color #DEA123
+          background-color: #FFBD2E
+        &#maximize
+          //border-color #1AAB29
+          background-color: #27C93F
+    #code-area
+      padding: $main-size
+      background-color: lighten($back-color, 5%)
+      pre
+        font-family: 'Roboto Mono'
+        font-size: 1.2em
+        line-height: 1.5
+        margin: 0
+    #status-bar
+      overflow: auto
+      padding: $main-size
+      #language
+        color: if(lightness($back-color) > 50, black, white)
+        float: right
+        font-size: $main-size
