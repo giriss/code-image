@@ -97,7 +97,10 @@ def image(uuid):
         os.makedirs(TMP_DIR)
 
     out_file = open('%s/%s.html' % (TMP_DIR, uuid), 'w')
-    out_file.write(render(get_attributes_from_redis(uuid)))
+    attributes = get_attributes_from_redis(uuid)
+    if attributes == {}:
+        return 'Not found or expired', 404
+    out_file.write(render(attributes))
     out_file.flush()
     os.fsync(out_file)
 
@@ -117,4 +120,8 @@ def image(uuid):
 
 @app.route('/page/<string:uuid>')
 def page(uuid):
-    return render(get_attributes_from_redis(uuid))
+    attributes = get_attributes_from_redis(uuid)
+    if attributes == {}:
+        return 'Not found or expired', 404
+    else:
+        return render(attributes)
