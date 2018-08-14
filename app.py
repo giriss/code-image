@@ -101,7 +101,11 @@ def image(uuid):
     out_file.flush()
     os.fsync(out_file)
 
-    subprocess.call(['wkhtmltoimage', '%s/%s.html' % (TMP_DIR, uuid), '%s/%s.png' % (TMP_DIR, uuid)])
+    command = 'wkhtmltoimage'
+    if os.path.exists('/app/bin/%s' % command):
+        command = '/app/bin/%s' % command
+
+    subprocess.call([command, '%s/%s.html' % (TMP_DIR, uuid), '%s/%s.png' % (TMP_DIR, uuid)])
 
     resp = send_from_directory(TMP_DIR, '%s.png' % uuid, as_attachment=not not request.args.get('download'))
 
