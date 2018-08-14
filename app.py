@@ -15,7 +15,7 @@ app = Flask(__name__)
 DEFAULTS = {
     b'size': b'12',
     b'background': b'rgb(255, 255, 255)',
-    b'color': b'rgb(50, 100, 120)',
+    b'color': b'rgb(10, 50, 70)',
     b'theme': b'monokai'
 }
 
