@@ -21,7 +21,7 @@ DEFAULTS = {
 
 
 def redis_conn():
-    return redis.StrictRedis()
+    return redis.from_url(os.environ.get('REDIS_URL', 'redis://localhost'))
 
 
 def get_attributes_from_redis(uuid):
