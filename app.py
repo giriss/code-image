@@ -81,6 +81,7 @@ def highlight_code():
 
     uuid = uuid4()
     redis_instance.hmset(uuid, attributes)
+    redis_instance.expire(uuid, 600) # expire in 10 minutes
 
     return json_dumps({
         "image_url": "http://localhost:5000/image/%s" % uuid,
