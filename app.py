@@ -19,6 +19,8 @@ DEFAULTS = {
     b'theme': b'monokai'
 }
 
+TMP_DIR = '/tmp/highlighter'
+
 
 def redis_conn():
     return redis.from_url(os.environ.get('REDIS_URL', 'redis://localhost'))
@@ -84,27 +86,27 @@ def highlight_code():
     redis_instance.expire(uuid, 600) # expire in 10 minutes
 
     return json_dumps({
-        "image_url": "http://localhost:5000/image/%s" % uuid,
-        "page_url": "http://localhost:5000/page/%s" % uuid
+        "image_url": "%simage/%s" % (request.host_url, uuid),
+        "page_url": "%spage/%s" % (request.host_url, uuid)
     })
 
 
 @app.route('/image/<string:uuid>')
 def image(uuid):
-    if not os.path.exists('/tmp/highlighter'):
-        os.makedirs('/tmp/highlighter')
+    if not os.path.exists(TMP_DIR):
+        os.makedirs(TMP_DIR)
 
-    out_file = open('/tmp/highlighter/%s.html' % uuid, 'w')
+    out_file = open('%s/%s.html' % (TMP_DIR, uuid), 'w')
     out_file.write(render(get_attributes_from_redis(uuid)))
     out_file.flush()
     os.fsync(out_file)
 
-    subprocess.call(['wkhtmltoimage', '/tmp/highlighter/%s.html' % uuid, '/tmp/highlighter/%s.png' % uuid])
+    subprocess.call(['wkhtmltoimage', '%s/%s.html' % (TMP_DIR, uuid), '%s/%s.png' % (TMP_DIR, uuid)])
 
-    resp = send_from_directory('/tmp/highlighter', '%s.png' % uuid, as_attachment=not not request.args.get('download'))
+    resp = send_from_directory(TMP_DIR, '%s.png' % uuid, as_attachment=not not request.args.get('download'))
 
-    os.remove('/tmp/highlighter/%s.html' % uuid)
-    os.remove('/tmp/highlighter/%s.png' % uuid)
+    os.remove('%s/%s.html' % (TMP_DIR, uuid))
+    os.remove('%s/%s.png' % (TMP_DIR, uuid))
 
     return resp
 
