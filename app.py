@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, send_from_directory
 from flask.json import dumps as json_dumps
 from pygments import highlight
-from pygments.lexers import get_lexer_by_name, get_lexer_for_filename
+from pygments.lexers import get_lexer_by_name
 from pygments.formatters import HtmlFormatter
 from sass import compile as sass_compile
 from uuid import uuid4
