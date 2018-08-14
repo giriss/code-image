@@ -7,8 +7,15 @@ from sass import compile as sass_compile
 from uuid import uuid4
 import subprocess
 import os
+import redis
 
 app = Flask(__name__)
+
+def set_defaults(attributes):
+    pass
+
+def render(attributes):
+    pass
 
 @app.route('/highlight', methods=['POST'])
 def highlight_code():
@@ -20,6 +27,21 @@ def highlight_code():
     language = json.get('language')
     filename = json.get('filename')
     theme = json.get('theme', 'monokai')
+
+    redis_instance = redis.StrictRedis()
+
+    attributes = {
+        'code': code
+    }
+    size and attributes['size'] = size
+    background and attributes['background'] = background
+    color and attributes['color'] = color
+    language and attributes['language'] = language
+    filename and attributes['filename'] = filename
+    theme and attributes['theme'] = theme
+
+    uuid = uuid4()
+    redis_instance.hmset(uuid, attributes)
 
     sass_variables = '$main-size: %spx\n' % size
     sass_variables += '$body-color: %s\n' % background
