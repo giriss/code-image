@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, send_from_directory
 from flask.json import dumps as json_dumps
 from pygments import highlight
-from pygments.lexers import get_lexer_by_name
+from pygments.lexers import get_lexer_by_name, get_lexer_for_filename
 from pygments.formatters import HtmlFormatter
+from pygments.util import ClassNotFound
 from sass import compile as sass_compile
 from uuid import uuid4
 import subprocess
@@ -40,14 +41,22 @@ def render(attributes):
     formatter = HtmlFormatter(style=attributes.get(b'theme', DEFAULTS[b'theme']).decode('utf-8'))
     style = css_output + formatter.get_style_defs()
 
-    language = attributes.get(b'language').decode('utf-8')
-    lexer = get_lexer_by_name(language)
+    language = attributes.get(b'language')
+    language = language and language.decode('utf-8')
+    filename = attributes.get(b'filename')
+    filename = filename and filename.decode('utf-8')
+
+    try:
+        lexer = get_lexer_by_name(language)
+    except ClassNotFound:
+        lexer = get_lexer_for_filename(filename)
+
     highlighted = highlight(attributes.get(b'code').decode('utf-8'), lexer, formatter)
 
     return render_template(
         'index.jinja2',
-        language=language,
-        filename=attributes.get(b'filename').decode('utf-8'),
+        language=language or lexer.name,
+        filename=filename,
         highlighted=highlighted,
         style=style
     )
