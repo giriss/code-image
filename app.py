@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, send_from_directory
-from flask.json import dumps as json_dumps
+from flask.json import jsonify
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, get_lexer_for_filename
 from pygments.formatters import HtmlFormatter
@@ -94,7 +94,7 @@ def highlight_code():
     redis_instance.hmset(uuid, attributes)
     redis_instance.expire(uuid, 600) # expire in 10 minutes
 
-    return json_dumps({
+    return jsonify({
         "image_url": "%simage/%s" % (request.host_url, uuid),
         "page_url": "%spage/%s" % (request.host_url, uuid)
     })
@@ -102,13 +102,14 @@ def highlight_code():
 
 @app.route('/image/<string:uuid>')
 def image(uuid):
+    attributes = get_attributes_from_redis(uuid)
+    if attributes == {}:
+        return 'Not found or expired', 404
+
     if not os.path.exists(TMP_DIR):
         os.makedirs(TMP_DIR)
 
     out_file = open('%s/%s.html' % (TMP_DIR, uuid), 'w')
-    attributes = get_attributes_from_redis(uuid)
-    if attributes == {}:
-        return 'Not found or expired', 404
     out_file.write(render(attributes))
     out_file.flush()
     os.fsync(out_file)
