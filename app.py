@@ -17,7 +17,8 @@ DEFAULTS = {
     b'size': b'12',
     b'background': b'rgb(255, 255, 255)',
     b'color': b'rgb(10, 50, 70)',
-    b'theme': b'monokai'
+    b'theme': b'monokai',
+    b'font': b'Roboto Mono'
 }
 
 TMP_DIR = '/tmp/highlighter'
@@ -32,7 +33,9 @@ def get_attributes_from_redis(uuid):
 
 
 def render(attributes):
-    sass_variables = '$main-size: %spx\n' % attributes.get(b'size', DEFAULTS[b'size']).decode('utf-8')
+    font = attributes.get(b'font', DEFAULTS[b'font']).decode('utf-8')
+    sass_variables = "$font: '%s'\n" % font
+    sass_variables += '$main-size: %spx\n' % attributes.get(b'size', DEFAULTS[b'size']).decode('utf-8')
     sass_variables += '$body-color: %s\n' % attributes.get(b'background', DEFAULTS[b'background']).decode('utf-8')
     sass_variables += '$back-color: %s\n' % attributes.get(b'color', DEFAULTS[b'color']).decode('utf-8')
     sass_file = sass_variables + open('assets/styles/main.sass', 'r').read()
@@ -58,7 +61,8 @@ def render(attributes):
         language=language or lexer.name,
         filename=filename,
         highlighted=highlighted,
-        style=style
+        style=style,
+        font=font
     )
 
 
@@ -71,6 +75,7 @@ def highlight_code():
     size = json.get('size')
     background = json.get('background')
     color = json.get('color')
+    font = json.get('font')
 
     redis_instance = redis_conn()
 
@@ -89,6 +94,8 @@ def highlight_code():
         attributes['filename'] = filename
     if theme:
         attributes['theme'] = theme
+    if font:
+        attributes['font'] = font
 
     uuid = uuid4()
     redis_instance.hmset(uuid, attributes)
