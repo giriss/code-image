@@ -8,7 +8,7 @@ You can send a piece of code to this API and we'll convert it to a nice shareabl
 ```http
 POST /highlight HTTP/1.1
 Content-Type: application/json
-Host: code-to-image.herokuapp.com
+Host: code2img.herokuapp.com
 Content-Length: 122
 
 {
