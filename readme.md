@@ -8,7 +8,7 @@ You can send a piece of code to this API and we'll convert it to a nice shareabl
 ```http
 POST /highlight HTTP/1.1
 Content-Type: application/json
-Host: code2img.herokuapp.com
+Host: code2image.up.railway.app
 Content-Length: 122
 
 {
@@ -22,8 +22,8 @@ You'll then recieve a response as follows:
 
 ```json
 {
-  "image_url": "https://code-to-image.herokuapp.com/image/03d2eca8-e25a-446f-9a18-7e3c208f80f0",
-  "page_url": "https://code-to-image.herokuapp.com/page/03d2eca8-e25a-446f-9a18-7e3c208f80f0"
+  "image_url": "https://code2image.up.railway.app/image/03d2eca8-e25a-446f-9a18-7e3c208f80f0",
+  "page_url": "https://code2image.up.railway.app/page/03d2eca8-e25a-446f-9a18-7e3c208f80f0"
 }
 ```
 
